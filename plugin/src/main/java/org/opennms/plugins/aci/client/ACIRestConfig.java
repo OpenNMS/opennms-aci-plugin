@@ -33,6 +33,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -43,6 +44,8 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.codec.binary.Base64;
+import org.opennms.plugins.aci.config.SouthCluster;
+import org.opennms.plugins.aci.config.SouthElement;
 
 /**
  * @author metispro
@@ -59,7 +62,20 @@ public class ACIRestConfig {
 
     public String password = "ciscopsdt";
 
-    /**
+    public ACIRestConfig() {}
+
+    public ACIRestConfig(SouthCluster southCluster) {
+        List<SouthElement> elements = southCluster.getElements();
+        aciUrl = "";
+        username = "";
+        password = "";
+        for (SouthElement element : elements ){
+            aciUrl += "https://" + element.getHost() + ":"  + element.getPort() + ",";
+            username = element.getUserid();
+            password = element.getPassword();
+        }
+    }
+                         /**
      * @return the clusterName
      */
     public String getClusterName() {

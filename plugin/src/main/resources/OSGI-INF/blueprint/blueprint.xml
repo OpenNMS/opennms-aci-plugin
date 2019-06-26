@@ -5,15 +5,6 @@
         http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0
         http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd">
 
-    <!-- Configuration properties -->
-    <cm:property-placeholder id="odlPluginProperties" persistent-id="org.opennms.plugins.opendaylight" update-strategy="reload">
-        <cm:default-properties>
-            <cm:property name="controllerUrl" value="http://localhost:8181" />
-            <cm:property name="username" value="admin" />
-            <cm:property name="password" value="admin" />
-        </cm:default-properties>
-    </cm:property-placeholder>
-
     <reference id="nodeDao" interface="org.opennms.integration.api.v1.dao.NodeDao" availability="mandatory"/>
     <reference id="requisitionRepository" interface="org.opennms.integration.api.v1.requisition.RequisitionRepository" availability="mandatory"/>
     <reference id="eventSubscriptionService" interface="org.opennms.integration.api.v1.events.EventSubscriptionService" availability="mandatory"/>
@@ -21,51 +12,17 @@
     <reference id="userDefinedLinkDao" interface="org.opennms.integration.api.v1.topology.UserDefinedLinkDao" availability="mandatory"/>
     <reference id="collectionSetPersistenceService" interface="org.opennms.integration.api.v1.collectors.CollectionSetPersistenceService" availability="mandatory"/>
 
-    <bean id="restconfClient" class="org.opennms.plugins.odl.OpendaylightRestconfClient" destroy-method="destroy">
-        <argument index="0" value="${controllerUrl}" />
-        <argument index="1" value="${username}" />
-        <argument index="2" value="${password}" />
-    </bean>
-
-    <service interface="org.opennms.integration.api.v1.health.HealthCheck">
-        <bean class="org.opennms.plugins.odl.OpendaylightHealthCheck">
-            <argument index="0" ref="restconfClient"/>
-        </bean>
-    </service>
-
-    <bean id="servicePollerFactory" class="org.opennms.plugins.odl.OpendaylightServicePollerFactory">
-        <argument index="0" ref="restconfClient"/>
-        <argument index="1" ref="nodeDao"/>
-    </bean>
-
-    <service ref="servicePollerFactory" interface="org.opennms.integration.api.v1.pollers.ServicePollerFactory"/>
-
-    <bean id="topologyHandler" class="org.opennms.plugins.odl.OpendaylightTopologyHandler" init-method="init" destroy-method="destroy">
-        <argument index="0" ref="restconfClient"/>
-        <argument index="1" ref="requisitionRepository"/>
-        <argument index="2" ref="eventSubscriptionService"/>
-        <argument index="3" ref="nodeDao"/>
-        <argument index="4" ref="userDefinedLinkDao"/>
-    </bean>
-
-    <bean id="eventGenerator" class="org.opennms.plugins.odl.OpendaylightEventGenerator" init-method="init" destroy-method="destroy">
-        <argument index="0" ref="restconfClient"/>
-        <argument index="1" ref="eventForwarder"/>
-        <argument index="2" ref="nodeDao"/>
-        <argument index="3" ref="servicePollerFactory"/>
-    </bean>
-
-    <bean id="metricPusher" class="org.opennms.plugins.odl.metrics.MetricPusher" init-method="init" destroy-method="destroy">
-        <argument index="0" ref="restconfClient"/>
-        <argument index="1" ref="nodeDao"/>
-        <argument index="2" ref="collectionSetPersistenceService"/>
-    </bean>
-
     <!-- Start ACI config -->
 
     <bean id="southboundConfigDao" class="org.opennms.netmgt.dao.jaxb.southbound.DefaultSouthboundConfigDao">
         <property name="reloadCheckInterval" value="-1" />
     </bean>
+
+    <service interface="org.opennms.integration.api.v1.health.HealthCheck">
+        <bean class="org.opennms.plugins.aci.AciHealthCheck">
+            <argument index="0" ref="southboundConfigDao"/>
+        </bean>
+    </service>
 
     <service interface="org.opennms.integration.api.v1.requisition.RequisitionProvider">
         <bean class="org.opennms.plugins.aci.AciRequisitionProvider">

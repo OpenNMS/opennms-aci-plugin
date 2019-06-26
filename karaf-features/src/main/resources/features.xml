@@ -15,7 +15,7 @@
 
     <feature name="aci-rest-client" description="aci" version="${project.version}">
         <feature version="${project.version}">aci-rest-client</feature>
-	<bundle>mvn:com.googlecode.json-simple/json-simple/$(json-simple-version}</bundle>
+	<bundle>mvn:com.googlecode.json-simple/json-simple/${json-simple-version}</bundle>
 	<bundle>mvn:javax.websocket/javax.websocket-api/1.1</bundle>
 	<bundle>mvn:org.glassfish.tyrus.bundles/tyrus-standalone-client/1.12</bundle>
 	<bundle>mvn:org.apache.httpcomponents/httpclient/4.3.6</bundle>

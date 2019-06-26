@@ -84,7 +84,8 @@ public class ACIRestClientTest
 //            client.getCurrentFaults(formattedTime);
 //            client.getClassInfo(  "faultRecord" );
 //            client.getClassInfo(  "faultRecord", "eventRecord" );
-            JSONArray jsonArray = client.getClassInfo( "topSystem" );
+//            JSONArray jsonArray = client.getClassInfo( "topSystem" );
+            JSONArray jsonArray = client.getClassInfo( "bogus" );
 //            client.getClassInfo( "ethpmPhysIf" );
 //            client.getManagedObject( "topology/pod-1/node-155/sys/phys-[eth1/18]/phys" );
 //            client.getManagedObject( "topology/pod-1/node-155/sys" );
