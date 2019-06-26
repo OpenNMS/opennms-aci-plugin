@@ -56,6 +56,7 @@ public class AciRequisitionProvider implements RequisitionProvider {
     private static final String TYPE = "aci";
     public static final String DEFAULT_FOREIGN_SOURCE = "ACI";
     public static final String METADATA_CONTEXT_ID = "ACI";
+    public static final String ACI_CLUSTER_TYPE = "CISCO-ACI";
 
     // TODO: Make this configurable
     public static final InetAddress NON_RESPONSIVE_IP_ADDRESS;
@@ -89,7 +90,7 @@ public class AciRequisitionProvider implements RequisitionProvider {
 
         List<SouthCluster> clusters = this.southboundConfigDao.getSouthboundClusters();
         for (SouthCluster southCluster : clusters) {
-            if (southCluster.getClusterType().equals("CISCO-ACI") &&
+            if (southCluster.getClusterType().equals(ACI_CLUSTER_TYPE) &&
                     request.getForeignSource().equals(southCluster.getClusterName())) {
                 //Build URL
                 String url = "";

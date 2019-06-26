@@ -27,29 +27,17 @@
  *******************************************************************************/
 package org.opennms.plugins.aci;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import org.json.simple.JSONObject;
-//import org.opennms.core.utils.ConfigFileConstants;
 import org.opennms.integration.api.v1.model.EventParameter;
 import org.opennms.integration.api.v1.model.InMemoryEvent;
+import org.opennms.integration.api.v1.model.Severity;
 import org.opennms.integration.api.v1.model.immutables.ImmutableInMemoryEvent;
-//import org.opennms.netmgt.model.OnmsSeverity;
-//import org.opennms.netmgt.model.events.EventBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,17 +93,17 @@ public class ConvertToEvent {
 //			}
 	}
 
-//	private static final Map<String, OnmsSeverity> SEVERITY_MAP;
+	private static final Map<String, Severity> SEVERITY_MAP;
 
-//	static {
-//		SEVERITY_MAP = new HashMap<String, OnmsSeverity>();
-//		SEVERITY_MAP.put("critical", OnmsSeverity.CRITICAL);
-//		SEVERITY_MAP.put("major", OnmsSeverity.MAJOR);
-//		SEVERITY_MAP.put("minor", OnmsSeverity.MINOR);
-//		SEVERITY_MAP.put("warning", OnmsSeverity.WARNING);
-//		SEVERITY_MAP.put("info", OnmsSeverity.NORMAL);
-//		SEVERITY_MAP.put("cleared", OnmsSeverity.CLEARED);
-//	}
+	static {
+		SEVERITY_MAP = new HashMap<String, Severity>();
+		SEVERITY_MAP.put("critical", Severity.CRITICAL);
+		SEVERITY_MAP.put("major", Severity.MAJOR);
+		SEVERITY_MAP.put("minor", Severity.MINOR);
+		SEVERITY_MAP.put("warning", Severity.WARNING);
+		SEVERITY_MAP.put("info", Severity.NORMAL);
+		SEVERITY_MAP.put("cleared", Severity.CLEARED);
+	}
 
 	public static final InMemoryEvent toEventBuilder(NodeCache nodeCache, String location, Date createDate,
 													 JSONObject attributes, String apicHost) throws ParseException {
@@ -125,16 +113,6 @@ public class ConvertToEvent {
 
 		ImmutableInMemoryEvent.Builder bldr = ImmutableInMemoryEvent.newBuilder();
 
-//		long timeDifference = getDateDiff(createDate, getcurrentSystemTime(), TimeUnit.MINUTES);
-//
-//		System.out.println(timeDifference);
-//		if (timeDifference > -MAX_SYSLOG_DROP_THRESHOLD_MIN && timeDifference <= MAX_SYSLOG_INGEST_THRESHOLD_MIN){
-//			bldr.setTime(createDate);
-//		}
-//		else {
-//			attributes.put("ingestedTime", getcurrentSystemTime().toString());
-//			bldr.setTime(getcurrentSystemTime());
-//		}
 		Long nodeId = (long) 0;
 		LOG.trace("Building Event for " + location + " message: " + attributes.toJSONString());
 		// First, let's add all Fault attributes as parameters.
@@ -175,7 +153,7 @@ public class ConvertToEvent {
 			bldr.setUei(ACI_UEI_PART + attributes.get("severity"));
 		else
 			bldr.setUei(ACI_UEI_PART + attributes.get("code"));
-//		bldr.setSeverity(SEVERITY_MAP.get(attributes.get("severity")).getLabel());
+		bldr.setSeverity(SEVERITY_MAP.get(attributes.get("severity")));
 		bldr.setSource(ApicService.class.getSimpleName());
 
 		EventParameter apicHostsParam = new EventParameter() {
@@ -191,39 +169,6 @@ public class ConvertToEvent {
 		};
 		bldr.addParameter(apicHostsParam);
 		return bldr.build();
-	}
-
-	public static long getDateDiff(Date date1, Date date2, TimeUnit TimeUnit) {
-		long diffInMillies = date2.getTime() - date1.getTime();
-		return TimeUnit.convert(diffInMillies, TimeUnit.MILLISECONDS);
-	}
-	
-	public static Map<String, String> readPropertiesInOrderFromToMap(File propertiesFileName) throws IOException {
-		InputStream propertiesFileInputStream = new FileInputStream(propertiesFileName);
-		Map<String, String> restConfigMap = new HashMap<String, String>();
-		final Properties properties = new Properties();
-		final BufferedReader reader = new BufferedReader(new InputStreamReader(propertiesFileInputStream));
-
-		String bufferedReader = reader.readLine();
-
-		while (bufferedReader != null) {
-			final ByteArrayInputStream lineStream = new ByteArrayInputStream(bufferedReader.getBytes("ISO-8859-1"));
-			properties.load(lineStream);
-
-			final Enumeration<?> propertyNames = properties.<String>propertyNames();
-
-			if (propertyNames.hasMoreElements()) {
-
-				final String configurationKey = (String) propertyNames.nextElement();
-				final String configurationValue = properties.getProperty(configurationKey);
-
-				restConfigMap.put(configurationKey, configurationValue);
-				properties.clear();
-			}
-			bufferedReader = reader.readLine();
-		}
-		reader.close();
-		return restConfigMap;
 	}
 
 }

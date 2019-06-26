@@ -77,7 +77,7 @@ public class ACIRestClientTest
             String query = "/api/node/class/faultRecord.json?query-target-filter=gt(faultRecord.created, \"" + formattedTime + "\")";
 //            System.out.println("Running query: " + query);
 //            String query = "/api/node/class/faultRecord.json?query-target-filter=gt(faultRecord.created, \"" + fDate + "T" + justTime + "\")";
-//            JSONArray jsonArray = client.getFaults(query);
+//            JSONArray jsonAray = client.getFaults(query);
 
 //            client.getFaults("/api/class/faultInst.json?query-target-filter=gt(faultInst.lastTransition, \"" + goodtime + "\")");
 //            client.getFaults("/api/node/class/faultRecord.json?query-target-filter=gt(faultRecord.created, \"" + goodtime + "\")");
