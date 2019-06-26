@@ -75,19 +75,16 @@ public class ACIRestClientTest
             System.out.println("Formatted Time: " + goodtime);
             
             String query = "/api/node/class/faultRecord.json?query-target-filter=gt(faultRecord.created, \"" + formattedTime + "\")";
-            System.out.println("Running query: " + query);
+//            System.out.println("Running query: " + query);
 //            String query = "/api/node/class/faultRecord.json?query-target-filter=gt(faultRecord.created, \"" + fDate + "T" + justTime + "\")";
-            JSONArray jsonArray = client.getFaults(query);
+//            JSONArray jsonArray = client.getFaults(query);
 
-            System.out.println(jsonArray.toJSONString());
-            
-            
 //            client.getFaults("/api/class/faultInst.json?query-target-filter=gt(faultInst.lastTransition, \"" + goodtime + "\")");
 //            client.getFaults("/api/node/class/faultRecord.json?query-target-filter=gt(faultRecord.created, \"" + goodtime + "\")");
 //            client.getCurrentFaults(formattedTime);
 //            client.getClassInfo(  "faultRecord" );
 //            client.getClassInfo(  "faultRecord", "eventRecord" );
-//            client.getClassInfo( "topSystem" );
+            JSONArray jsonArray = client.getClassInfo( "topSystem" );
 //            client.getClassInfo( "ethpmPhysIf" );
 //            client.getManagedObject( "topology/pod-1/node-155/sys/phys-[eth1/18]/phys" );
 //            client.getManagedObject( "topology/pod-1/node-155/sys" );
@@ -98,6 +95,8 @@ public class ACIRestClientTest
 //            client.getHealth( "fvAp", "fvTenant", "fabricNode" );
 //            client.getStats( "fvAp" );
 //            System.out.println("Completed query: " + query);
+            System.out.println(jsonArray.toJSONString());
+
         }
         catch ( Exception e )
         {

@@ -32,8 +32,14 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.opennms.integration.api.v1.config.requisition.Requisition;
+import org.opennms.integration.api.v1.config.requisition.SnmpPrimaryType;
 import org.opennms.integration.api.v1.config.requisition.immutables.ImmutableRequisition;
+import org.opennms.integration.api.v1.config.requisition.immutables.ImmutableRequisitionInterface;
+import org.opennms.integration.api.v1.config.requisition.immutables.ImmutableRequisitionMetaData;
+import org.opennms.integration.api.v1.config.requisition.immutables.ImmutableRequisitionNode;
 import org.opennms.integration.api.v1.requisition.RequisitionProvider;
 import org.opennms.integration.api.v1.requisition.RequisitionRepository;
 import org.opennms.integration.api.v1.requisition.RequisitionRequest;
@@ -75,12 +81,9 @@ public class AciRequisitionProvider implements RequisitionProvider {
     public Requisition getRequisition(RequisitionRequest requisitionRequest) {
         final AciRequistionRequest request = (AciRequistionRequest) requisitionRequest;
 
-        requisitionRepository.getDeployedRequisition(DEFAULT_FOREIGN_SOURCE);
+        Requisition curReq = requisitionRepository.getDeployedRequisition(DEFAULT_FOREIGN_SOURCE);
 
-        final ImmutableRequisition.Builder requisitionBuilder = ImmutableRequisition.newBuilder()
-                .setForeignSource(DEFAULT_FOREIGN_SOURCE);
-
-        ACIRestClient client;
+        ACIRestClient client = null;
         try {
             client = ACIRestClient.newAciRest(request.getForeignSource(), request.getApicUrl(), request.getUsername(),
                     request.getPassword());
@@ -88,7 +91,90 @@ public class AciRequisitionProvider implements RequisitionProvider {
             e.printStackTrace();
         }
 
-        return null;
+        final ImmutableRequisition.Builder requisitionBuilder = ImmutableRequisition.newBuilder()
+                .setForeignSource(DEFAULT_FOREIGN_SOURCE);
+
+        LOG.debug("sending get for top system");
+        JSONArray results = null;
+        try {
+            results = client.getClassInfo( "topSystem" );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        for (Object object : results) {
+            JSONObject objectData = (JSONObject) object;
+            if (objectData == null)
+                continue;
+            LOG.debug("total count " + (String) objectData.get("totalCount"));
+            for (Object object2 : objectData.keySet()) {
+                String key = (String) object2;
+                JSONObject classData = (JSONObject) objectData.get(key);
+                JSONObject attributes = (JSONObject) classData.get("attributes");
+                if (attributes == null)
+                    continue;
+
+
+                String dn = (String) attributes.get("dn");
+                String[] dnParts = dn.split("/");
+                dn = dnParts[0] + "_" + dnParts[1] + "_" + dnParts[2];
+
+                String nodeId = (String) attributes.get("name");
+
+                String building = request.getForeignSource();
+                String locationCategory = null;
+
+                if (request.getLocation() != null) {
+                    building = request.getLocation();
+                    locationCategory = request.getLocation();
+                }
+
+                String role = (String) attributes.get("role");
+
+                String ipAddr = (String) attributes.get("oobMgmtAddr");
+                InetAddress inetAddress = NON_RESPONSIVE_IP_ADDRESS;
+
+                try {
+                    //If we have an IP Address String from JSON, then try and create InetAddress object
+                    if (ipAddr != null)
+                        inetAddress = InetAddress.getByAddress(ipAddr.getBytes());
+                } catch (UnknownHostException e) {
+                    LOG.warn("ACI: Invalid InetAddress for: {}", ipAddr, e);
+                }
+
+                requisitionBuilder.addNode(ImmutableRequisitionNode.newBuilder()
+                        .setForeignId(dn)
+                        .setNodeLabel(nodeId)
+                        .addCategory(locationCategory)
+                        .addCategory(METADATA_CONTEXT_ID)
+                        .addCategory(role)
+                        .addMetaData(ImmutableRequisitionMetaData.newBuilder()
+                                .setContext(METADATA_CONTEXT_ID)
+                                .setKey("nodeId")
+                                .setValue(nodeId)
+                                .build())
+                        .addMetaData(ImmutableRequisitionMetaData.newBuilder()
+                                .setContext(METADATA_CONTEXT_ID)
+                                .setKey("topologyId")
+                                .setValue(dn)
+                                .build())
+                        .addInterface(ImmutableRequisitionInterface.newBuilder()
+                                .setIpAddress(inetAddress)
+                                .setDescription("ACI-" + (String) attributes.get("dn"))
+                                .setSnmpPrimary(SnmpPrimaryType.PRIMARY)
+                                .addMonitoredService("ICMP")
+                                .addMonitoredService("SSH")
+                                .build())
+                        .addAsset("latitude", "45.340561")
+                        .addAsset("longitude", "-75.910005")
+                        .addAsset("building", building)
+                        .build());
+
+//                iface.setManaged(Boolean.TRUE);
+//                iface.setStatus(Integer.valueOf(1));
+            }
+        }
+
+       return requisitionBuilder.build();
     }
 
     @Override
@@ -100,4 +186,5 @@ public class AciRequisitionProvider implements RequisitionProvider {
     public RequisitionRequest unmarshalRequest(byte[] bytes) {
         return new AciRequistionRequest();
     }
+
 }
