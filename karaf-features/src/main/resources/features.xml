@@ -9,29 +9,21 @@
         <feature dependency="true">shell</feature>
         <feature version="${opennms.api.version}" dependency="true">opennms-integration-api</feature>
         <feature version="${okhttp.version}" dependency="true">okhttp</feature>
+        <bundle>mvn:commons-io/commons-io/${commonsIoVersion}</bundle>
+        <bundle>mvn:commons-lang/commons-lang/${commonsLangVersion}</bundle>
+        <bundle>mvn:org.apache.commons/commons-lang3/${commonsLang3Version}</bundle>
+        <bundle>mvn:commons-cli/commons-cli/1.2</bundle>
+        <bundle>mvn:javax.mail/mail/1.4.5</bundle>
         <bundle dependency="true">mvn:com.google.guava/guava/${guava.version}</bundle>
         <bundle>mvn:org.opennms.plugins.aci/aci-plugin/${project.version}</bundle>
-    </feature>
-
-    <feature name="aci-rest-client" description="aci" version="${project.version}">
-        <feature version="${project.version}">aci-rest-client</feature>
-	<bundle>mvn:com.googlecode.json-simple/json-simple/${json-simple-version}</bundle>
-	<bundle>mvn:javax.websocket/javax.websocket-api/1.1</bundle>
-	<bundle>mvn:org.glassfish.tyrus.bundles/tyrus-standalone-client/1.12</bundle>
-	<bundle>mvn:org.apache.httpcomponents/httpclient/4.3.6</bundle>
-	<bundle>mvn:org.apache.httpcomponents/httpcore/4.3.3</bundle>
-    </feature>
-
-    <feature name="netty" description="Netty" version="4.1.30.Final">
-        <bundle>mvn:io.netty/netty-codec-http/4.1.30.Final</bundle>
-        <bundle>mvn:io.netty/netty-codec/4.1.30.Final</bundle>
-        <bundle>mvn:io.netty/netty-handler/4.1.30.Final</bundle>
-        <bundle>mvn:io.netty/netty-buffer/4.1.30.Final</bundle>
-        <bundle>mvn:io.netty/netty-transport/4.1.30.Final</bundle>
-        <bundle>mvn:io.netty/netty-resolver/4.1.30.Final</bundle>
-        <bundle>mvn:io.netty/netty-transport-native-epoll/4.1.30.Final/jar/linux-x86_64</bundle>
-        <bundle>mvn:io.netty/netty-common/4.1.30.Final</bundle>
-        <bundle>mvn:io.netty/netty-transport-native-unix-common/4.1.30.Final</bundle>
+        <bundle>mvn:com.googlecode.json-simple/json-simple/${json-simple-version}</bundle>
+        <bundle>mvn:javax.websocket/javax.websocket-api/${javax-websocket-api.version}</bundle>
+        <bundle>wrap:mvn:org.glassfish.tyrus.bundles/tyrus-standalone-client/${glassfish-tyrus-version}</bundle>
+        <bundle>wrap:mvn:org.apache.httpcomponents/httpclient/${apache-http-client-version}</bundle>
+        <bundle>wrap:mvn:org.apache.httpcomponents/httpcore/${apache-http-core-version}</bundle>
+        <bundle>mvn:com.googlecode.json-simple/json-simple/${json-simple-version}</bundle>
+        <bundle>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+        <bundle>mvn:org.quartz-scheduler/quartz/${quartzVersion}</bundle>
     </feature>
 
     <feature name="okhttp" description="okhttp" version="${okhttp.version}">

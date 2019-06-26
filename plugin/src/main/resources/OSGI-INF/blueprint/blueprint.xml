@@ -14,7 +14,7 @@
 
     <!-- Start ACI config -->
 
-    <bean id="southboundConfigDao" class="org.opennms.netmgt.dao.jaxb.southbound.DefaultSouthboundConfigDao">
+    <bean id="southboundConfigDao" class="org.opennms.plugins.aci.dao.jaxb.southbound.DefaultSouthboundConfigDao">
         <property name="reloadCheckInterval" value="-1" />
     </bean>
 
@@ -36,7 +36,7 @@
         <bean class="org.opennms.plugins.aci.AciEventConfExtension"/>
     </service>
 
-    <bean id="apicService" class="org.opennms.aci.module.ApicService" init-method="init" destroy-method="destroy">
+    <bean id="apicService" class="org.opennms.plugins.aci.ApicService" init-method="init" destroy-method="destroy">
         <argument index="0" ref="southboundConfigDao"/>
         <argument index="1" ref="eventForwarder"/>
         <argument index="2" ref="nodeDao"/>

@@ -26,7 +26,8 @@ mvn clean install
 
 From the OpenNMS Karaf shell:
 ```
-TOOO
+feature:repo-add mvn:org.opennms.plugins.aci/aci-karaf-features/1.0.0-SNAPSHOT/xml
+feature:install opennms-plugins-aci
 ```
 
 Update automatically:
