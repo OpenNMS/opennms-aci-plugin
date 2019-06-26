@@ -30,6 +30,7 @@ package org.opennms.plugins.aci;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Map;
 
 import org.json.simple.JSONArray;
@@ -44,6 +45,9 @@ import org.opennms.integration.api.v1.requisition.RequisitionProvider;
 import org.opennms.integration.api.v1.requisition.RequisitionRepository;
 import org.opennms.integration.api.v1.requisition.RequisitionRequest;
 import org.opennms.plugins.aci.client.ACIRestClient;
+import org.opennms.plugins.aci.config.SouthCluster;
+import org.opennms.plugins.aci.config.SouthElement;
+import org.opennms.plugins.aci.dao.southbound.SouthboundConfigDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +68,14 @@ public class AciRequisitionProvider implements RequisitionProvider {
         }
     }
 
-    private RequisitionRepository requisitionRepository;
+    private final RequisitionRepository requisitionRepository;
+
+    private final SouthboundConfigDao southboundConfigDao;
+
+    public AciRequisitionProvider(SouthboundConfigDao southboundConfigDao, RequisitionRepository requisitionRepository) {
+        this.southboundConfigDao = southboundConfigDao;
+        this.requisitionRepository = requisitionRepository;
+    }
 
     @Override
     public String getType() {
@@ -74,7 +85,35 @@ public class AciRequisitionProvider implements RequisitionProvider {
     @Override
     public RequisitionRequest getRequest(Map<String, String> parameters) {
 
-        return new AciRequistionRequest(parameters);
+        AciRequistionRequest request = new AciRequistionRequest(parameters);
+
+        List<SouthCluster> clusters = this.southboundConfigDao.getSouthboundClusters();
+        for (SouthCluster southCluster : clusters) {
+            if (southCluster.getClusterType().equals("CISCO-ACI") &&
+                    request.getForeignSource().equals(southCluster.getClusterName())) {
+                //Build URL
+                String url = "";
+                String username = "";
+                String password = "";
+                String location = southCluster.getLocation();
+
+                if (location != null)
+                    request.setLocation(location);
+
+                List<SouthElement> elements = southCluster.getElements();
+                for (SouthElement element : elements ){
+                    url += "https://" + element.getHost() + ":"  + element.getPort() + ",";
+                    username = element.getUserid();
+                    password = element.getPassword();
+                }
+                // We found a corresponding entry - copy the credentials to the request
+                request.setApicUrl(url);
+                request.setUsername(username);
+                request.setPassword(password);
+            }
+        }
+
+        return request;
     }
 
     @Override
