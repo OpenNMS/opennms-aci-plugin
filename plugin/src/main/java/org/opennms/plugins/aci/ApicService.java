@@ -29,13 +29,13 @@
 package org.opennms.plugins.aci;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.opennms.integration.api.v1.dao.NodeDao;
 import org.opennms.integration.api.v1.events.EventForwarder;
 import org.opennms.plugins.aci.config.SouthCluster;
+import org.opennms.plugins.aci.dao.southbound.SouthboundConfigDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,10 +70,13 @@ public class ApicService {
     private EventForwarder eventForwarder;
     
     private NodeDao nodeDao;
+
+    private SouthboundConfigDao southboundConfigDao;
     
     private static ApicServiceManager apicServiceManager;
 
-    public ApicService(EventForwarder eventForwarder, NodeDao nodeDao) {
+    public ApicService(SouthboundConfigDao southboundConfigDao, EventForwarder eventForwarder, NodeDao nodeDao) {
+        this.southboundConfigDao = southboundConfigDao;
         this.eventForwarder = eventForwarder;
         this.nodeDao = nodeDao;
     }
@@ -81,8 +84,7 @@ public class ApicService {
     public void init() {
         LOG.info("ACI: Initializaing ApicService ...");
 
-//        List<SouthCluster> clusters = this.southboundConfigDao.getSouthboundClusters();
-        List<SouthCluster> clusters = new ArrayList<>();
+        List<SouthCluster> clusters = this.southboundConfigDao.getSouthboundClusters();
         apicServiceManager = new ApicServiceManager(eventForwarder, nodeDao, clusters);
         apicServiceManager.start();
         

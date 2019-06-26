@@ -67,6 +67,10 @@
         <argument index="2" ref="collectionSetPersistenceService"/>
     </bean>
 
+    <bean id="southboundConfigDao" class="org.opennms.netmgt.dao.jaxb.southbound.DefaultSouthboundConfigDao">
+        <property name="reloadCheckInterval" value="-1" />
+    </bean>
+
     <service interface="org.opennms.integration.api.v1.config.datacollection.graphs.GraphPropertiesExtension">
         <bean class="org.opennms.plugins.odl.config.GraphPropertiesExtension"/>
     </service>
@@ -76,8 +80,9 @@
     </service>
 
     <bean id="apicService" class="org.opennms.aci.module.ApicService" init-method="init" destroy-method="destroy">
-        <property name="eventForwarder" ref="eventForwarder"/>
-        <property name="nodeDao" ref="nodeDao"/>
+        <argument index="0" ref="southboundConfigDao"/>
+        <argument index="1" ref="eventForwarder"/>
+        <argument index="2" ref="nodeDao"/>
     </bean>
 
 </blueprint>

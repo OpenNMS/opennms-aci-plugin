@@ -27,6 +27,7 @@
         <snmp4j.bundle.version>2.6.3_1</snmp4j.bundle.version>
         <json-simple-version>1.1.1</json-simple-version>
         <commons-codec-version>1.9</commons-codec-version>
+        <commonsIoVersion>2.5</commonsIoVersion>
         <javax-websocket-api.version>1.1</javax-websocket-api.version>
         <glassfish-tyrus-version>1.12</glassfish-tyrus-version>
         <apache-http-client-version>4.3.6</apache-http-client-version>
@@ -34,6 +35,8 @@
         <quartzVersion>2.2.3</quartzVersion>
         <commonsLangVersion>2.6</commonsLangVersion>
         <commonsLang3Version>3.4</commonsLang3Version>
+        <springVersion>4.2.9.RELEASE</springVersion>
+        <eclipselinkVersion>2.5.1</eclipselinkVersion>
     </properties>
 
     <modules>
@@ -83,6 +86,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commonsLang3Version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commonsIoVersion}</version>
             </dependency>
 
             <!-- Test -->
