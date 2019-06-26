@@ -56,6 +56,10 @@ public abstract class AbstractJaxbConfigDao<K, V> implements InitializingBean {
     private JaxbReloadCallback m_callback = new JaxbReloadCallback();
     private Long m_reloadCheckInterval = null;
 
+    public AbstractJaxbConfigDao() {
+        super();
+    }
+
     /**
      * <p>Constructor for AbstractJaxbConfigDao.</p>
      *

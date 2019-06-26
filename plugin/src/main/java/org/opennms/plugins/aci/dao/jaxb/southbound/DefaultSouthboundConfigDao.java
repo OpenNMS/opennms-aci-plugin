@@ -58,7 +58,18 @@ public class DefaultSouthboundConfigDao extends AbstractJaxbConfigDao<Southbound
         super(SouthboundConfiguration.class, "Southbound Controlller Config");
         Resource configResource = null;
         try {
-            configResource = new UrlResource(Paths.get(System.getProperty("opennms.home"), "southbound-configuration.xml").toUri());
+            configResource = new UrlResource(Paths.get(System.getProperty("opennms.home"), "etc", "southbound-configuration.xml").toUri());
+            LOG.debug("Setting configResource: " + configResource.getFilename());
+            this.setConfigResource(configResource);
+            this.afterPropertiesSet();
+        } catch (Exception e) {
+            LOG.warn("Error loading resource: " + configResource.toString(), e);
+        }
+    }
+
+    public DefaultSouthboundConfigDao(Resource configResource) {
+        super(SouthboundConfiguration.class, "Southbound Controlller Config");
+        try {
             LOG.debug("Setting configResource: " + configResource.getFilename());
             this.setConfigResource(configResource);
             this.afterPropertiesSet();

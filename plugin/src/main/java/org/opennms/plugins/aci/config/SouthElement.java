@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opennms.integration.api.xml.ConfigUtils;
+import org.opennms.plugins.aci.dao.jaxb.southbound.ValidateUsing;
 
 /**
  * @author tf016851
@@ -44,6 +45,7 @@ import org.opennms.integration.api.xml.ConfigUtils;
  */
 @XmlRootElement(name = "south-element")
 @XmlAccessorType(XmlAccessType.FIELD)
+@ValidateUsing("southbound-configuration.xsd")
 public class SouthElement implements Serializable {
     
     private static final long serialVersionUID = 2L;

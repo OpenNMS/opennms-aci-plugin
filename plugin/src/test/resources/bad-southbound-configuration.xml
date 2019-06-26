@@ -1,0 +1,13 @@
+<southbound-configuration xmlns="http://xmlns.opennms.org/xsd/config/southbound-configuration">
+  <south-cluster>
+    <cluster-name>sandboxapicdc</cluster-name>
+    <cluster-type>CISCO-ACI</cluster-type>
+    <poll-duration-minutes>0</poll-duration-minutes>
+    <south-element host="sandboxapicdc.cisco.com"
+             port="443"
+             userid="admin"
+             password="ciscopsdt"
+             reconnect-delay="1000"
+    />
+  </south-cluster
+</southbound-configuration>

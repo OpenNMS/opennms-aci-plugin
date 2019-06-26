@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+        targetNamespace="http://xmlns.opennms.org/xsd/config/southbound-configuration" 
+        xmlns:this="http://xmlns.opennms.org/xsd/config/southbound-configuration" elementFormDefault="qualified">
+ 
+  <element name="southbound-configuration">
+    <complexType>
+      <sequence>
+        <element ref="this:south-cluster" minOccurs="0" maxOccurs="unbounded" />
+      </sequence>
+    </complexType>
+  </element>
+
+  
+  <element name="south-cluster"  >
+    <annotation>
+      <documentation>
+      
+      Defines an import job with a cron expression
+        
+        http://www.quartz-scheduler.org/documentation/quartz-1.x/tutorials/crontrigger
+          Field Name     Allowed Values      Allowed Special Characters
+          Seconds        0-59                , - * /
+          Minutes        0-59                , - * /
+          Hours          0-23                , - * /
+          Day-of-month   1-31                , - * ? / L W C
+          Month          1-12 or JAN-DEC     , - * /
+          Day-of-Week    1-7 or SUN-SAT      , - * ? / L C #
+          Year (Opt)     empty, 1970-2099    , - * /
+      </documentation>
+    </annotation>
+    <complexType>
+      <sequence>
+        <element name="cluster-name" maxOccurs="1" minOccurs="0" type="string"/>
+        <element name="cluster-type" maxOccurs="1" minOccurs="0" type="string"/>
+        <element name="cron-schedule" maxOccurs="1" minOccurs="0" type="string" />
+        <element name="location" maxOccurs="1" minOccurs="0" type="string" />
+        <element name="poll-duration-minutes" maxOccurs="1" minOccurs="0" type="integer" />
+        <element ref="this:south-element" minOccurs="0" maxOccurs="unbounded" />
+      </sequence>
+    </complexType>
+  </element>
+
+  <element name="south-element"  >
+    <complexType>
+      <attribute name="host" type="string" use="required"/>
+      <attribute name="port" type="int" use="optional" default="443" />
+      <attribute name="userid" type="string" use="optional" default="opennms" />
+      <attribute name="password" type="string" use="optional" default="opennms" />
+      <attribute name="southbound-api" type="string" use="optional" default="org.opennms.netmgt.southd." />
+      <attribute name="southbound-message-parser" type="string" use="optional" default="org.opennms.netmgt.southd." />
+      <attribute name="reconnect-delay" type="positiveInteger" use="optional" default="30000" />
+    </complexType>
+  </element>
+</schema>
+

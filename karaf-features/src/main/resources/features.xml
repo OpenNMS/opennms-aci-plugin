@@ -15,15 +15,14 @@
         <bundle>mvn:commons-cli/commons-cli/1.2</bundle>
         <bundle>mvn:javax.mail/mail/1.4.5</bundle>
         <bundle dependency="true">mvn:com.google.guava/guava/${guava.version}</bundle>
-        <bundle>mvn:org.opennms.plugins.aci/aci-plugin/${project.version}</bundle>
         <bundle>mvn:com.googlecode.json-simple/json-simple/${json-simple-version}</bundle>
         <bundle>mvn:javax.websocket/javax.websocket-api/${javax-websocket-api.version}</bundle>
         <bundle>wrap:mvn:org.glassfish.tyrus.bundles/tyrus-standalone-client/${glassfish-tyrus-version}</bundle>
         <bundle>wrap:mvn:org.apache.httpcomponents/httpclient/${apache-http-client-version}</bundle>
         <bundle>wrap:mvn:org.apache.httpcomponents/httpcore/${apache-http-core-version}</bundle>
-        <bundle>mvn:com.googlecode.json-simple/json-simple/${json-simple-version}</bundle>
         <bundle>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
         <bundle>mvn:org.quartz-scheduler/quartz/${quartzVersion}</bundle>
+        <bundle>mvn:org.opennms.plugins.aci/aci-plugin/${project.version}</bundle>
     </feature>
 
     <feature name="okhttp" description="okhttp" version="${okhttp.version}">

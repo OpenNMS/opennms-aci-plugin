@@ -38,11 +38,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.opennms.plugins.aci.dao.jaxb.southbound.ValidateUsing;
+
 /**
  * @author tf016851
  */
 @XmlRootElement(name = "south-cluster")
 @XmlAccessorType(XmlAccessType.FIELD)
+@ValidateUsing("southbound-configuration.xsd")
 public class SouthCluster implements Serializable {
     
     private static final long serialVersionUID = 2L;
