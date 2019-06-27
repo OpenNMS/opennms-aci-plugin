@@ -114,7 +114,7 @@ public class ConvertToEvent {
 		ImmutableInMemoryEvent.Builder bldr = ImmutableInMemoryEvent.newBuilder();
 
 		Long nodeId = (long) 0;
-		LOG.trace("Building Event for " + location + " message: " + attributes.toJSONString());
+		LOG.trace("ACI: Building Event for " + location + " message: " + attributes.toJSONString());
 		// First, let's add all Fault attributes as parameters.
 		for (Object obj : attributes.keySet()) {
 			EventParameter param = new EventParameter() {

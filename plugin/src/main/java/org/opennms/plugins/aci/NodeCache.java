@@ -129,8 +129,8 @@ public class NodeCache {
                 return Long.parseLong(nodeKey);
             }
         } catch (Throwable e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.warn("ACI: Received {} for {}", e.getClass().getSimpleName(), key);
+            LOG.warn("ACI: Exception: ", e);
         }
 
         return null;
@@ -143,8 +143,8 @@ public class NodeCache {
             if (nodeKeyParts.length == 2)
                 return nodeKeyParts[1];
         } catch (Throwable e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.warn("ACI: Received {} for {}", e.getClass().getSimpleName(), key);
+            LOG.warn("ACI: Exception: ", e);
         }
         
         return null;

@@ -61,6 +61,8 @@ public class ApicEventForwader {
     }
     
     public void sendEvent(String clusterName, String apicHost, String jsonMessage) {
+
+        LOG.debug("ACI: sendEvent clusterName: {} apicHost: {} jsonMessage: {}", clusterName, apicHost, jsonMessage);
         
         try {
             final JSONParser parser = new JSONParser();
@@ -97,7 +99,7 @@ public class ApicEventForwader {
                             createDate = ApicService.format.parse(onlydate + "T" + onlytime
                                     + tz);
                         } catch (Throwable e) {
-                            e.printStackTrace();
+                            LOG.warn("ACI: Failed to parse created attribute", e);
                             createDate = null;
                         }
                     }
@@ -110,31 +112,15 @@ public class ApicEventForwader {
 
                     if (event != null) {
                         eventForwarder.sendAsync(event);
-                    } else  {
-//                        LOG.debug("Sent " + events.getEventCount() + " event(s)");
-//                        //Loop on suspects and send newSuspectEvents
-//                        suspects.values().stream()
-//                        .filter(e -> !e.hasNodeid() && e.getInterface() != null)
-//                        .forEach(e -> {
-//                            LOG.trace("ApicService: Found a new suspect {}", e.getInterface());
-//                            sendNewSuspectEvent(e.getInterface(), e.getDistPoller());
-//                        });
                     }
                 }
             }
         } catch (Throwable e) {
-            LOG.error("Failure sending message:\n" + jsonMessage + "\n", e);
+            LOG.error("ACI: Failure sending message:\n" + jsonMessage + "\n", e);
             if (LOG.isDebugEnabled()) {
-                System.out.println(jsonMessage);
-                e.printStackTrace();
+                LOG.debug("ACI: Excpetion stack: ", e);
             }
         }
     }
     
-//    private void sendNewSuspectEvent(String eventInterface, String distPoller) {
-//        EventBuilder bldr = new EventBuilder(EventConstants.NEW_SUSPECT_INTERFACE_EVENT_UEI, "syslogd");
-//        bldr.setInterface(addr(eventInterface));
-//        bldr.setHost(localAddr);
-//        eventForwarder.sendNow(bldr.getEvent());
-//    }
 }

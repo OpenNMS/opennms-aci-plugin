@@ -106,6 +106,10 @@ public class ApicClusterManager extends Thread {
         this.clusterName = cluster.getClusterName();
         this.client = ClientManager.createClient();
 
+        client.getProperties().put(ClientProperties.HANDSHAKE_TIMEOUT, 60000);
+        client.setAsyncSendTimeout(60000);
+        client.setDefaultMaxSessionIdleTimeout(60000);
+
         if (!this.hostVerficationEnabled) {
             SslEngineConfigurator sslEngineConfigurator = new SslEngineConfigurator(new SslContextConfigurator());
             sslEngineConfigurator.setHostVerificationEnabled(false);
