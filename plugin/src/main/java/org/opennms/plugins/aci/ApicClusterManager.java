@@ -149,6 +149,9 @@ public class ApicClusterManager extends Thread {
      */
     @Override
     public void run() {
+        if (this.shutdown)
+            return;
+
         LOG.info("ACI: Starting ApicClusterManager for: " + clusterName);
 
         try {
@@ -158,6 +161,7 @@ public class ApicClusterManager extends Thread {
             while (isRunning()) {
                 //Currently both Subscription and Token expire every 60 seconds
                 if ((System.currentTimeMillis() - now) > 30000 && this.subscriptionId != null) {
+                    LOG.debug("ACI: Refresh client session and subscription token for id: {}", subscriptionId);
                     //Do refresh on client session
                     aciClient.runQueryNoAuth("/api/aaaRefresh.json");
                     //Do refresh on subscription
@@ -208,7 +212,7 @@ public class ApicClusterManager extends Thread {
                         public void onMessage(String message) {
                             if (message == null)
                                 return;
-                            LOG.trace("Received message: {}", message);
+                            LOG.trace("ACI: Received message: {}", message);
                             Runnable runnableTask = () -> {
                                 apicEventForwader.sendEvent(clusterName, aciClient.getHost(), message);
                             };

@@ -39,7 +39,6 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opennms.plugins.aci.config.SouthCluster;
 import org.opennms.plugins.aci.dao.jaxb.southbound.DefaultSouthboundConfigDao;
@@ -80,7 +79,6 @@ public class DefaultSouthboundConfigDaoTest {
     public void tearDown() throws Exception {
     }
 
-    @Ignore
     @Test
     public void testBadConfig() throws MalformedURLException, IOException {
         Resource configResource = new UrlResource(Paths.get(new File( "." ).getCanonicalPath(), "src/test/resources/bad-southbound-configuration.xml").toUri());
@@ -100,6 +98,6 @@ public class DefaultSouthboundConfigDaoTest {
         DefaultSouthboundConfigDao dao = new DefaultSouthboundConfigDao(configResource);
 
         List<SouthCluster> clusters = dao.getSouthboundClusters();
-        Assert.assertTrue(clusters.size() > 0);
+        Assert.assertTrue(clusters.size() == 1);
     }
 }

@@ -25,10 +25,4 @@
         <bundle>mvn:org.opennms.plugins.aci/aci-plugin/${project.version}</bundle>
     </feature>
 
-    <feature name="okhttp" description="okhttp" version="${okhttp.version}">
-        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okio/${okio.bundle.version}</bundle>
-        <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okhttp/${okhttp.bundle.version}</bundle>
-        <bundle dependency="true">wrap:mvn:com.squareup.okhttp3/logging-interceptor/${okhttp.version}</bundle>
-    </feature>
-
 </features>

@@ -36,7 +36,6 @@ import java.util.Map;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.opennms.integration.api.v1.config.requisition.Requisition;
-import org.opennms.integration.api.v1.config.requisition.SnmpPrimaryType;
 import org.opennms.integration.api.v1.config.requisition.immutables.ImmutableRequisition;
 import org.opennms.integration.api.v1.config.requisition.immutables.ImmutableRequisitionInterface;
 import org.opennms.integration.api.v1.config.requisition.immutables.ImmutableRequisitionMetaData;
@@ -111,6 +110,7 @@ public class AciRequisitionProvider implements RequisitionProvider {
                 request.setApicUrl(url);
                 request.setUsername(username);
                 request.setPassword(password);
+                request.setClusterName(southCluster.getClusterName());
             }
         }
 
@@ -131,8 +131,12 @@ public class AciRequisitionProvider implements RequisitionProvider {
             e.printStackTrace();
         }
 
+        //Initialize RequisitionBuilder with foreignSource
+        String foreignSource = DEFAULT_FOREIGN_SOURCE;
+        if (((AciRequistionRequest) requisitionRequest).getClusterName() != null)
+            foreignSource = ((AciRequistionRequest) requisitionRequest).getClusterName();
         final ImmutableRequisition.Builder requisitionBuilder = ImmutableRequisition.newBuilder()
-                .setForeignSource(DEFAULT_FOREIGN_SOURCE);
+                .setForeignSource(foreignSource);
 
         LOG.debug("sending get for top system");
         JSONArray results = null;
@@ -171,46 +175,70 @@ public class AciRequisitionProvider implements RequisitionProvider {
                 String role = (String) attributes.get("role");
 
                 String ipAddr = (String) attributes.get("oobMgmtAddr");
+                String ipAddr6 = (String) attributes.get("oobMgmtAddr6");
                 InetAddress inetAddress = NON_RESPONSIVE_IP_ADDRESS;
+                InetAddress inetAddress6 = null;
 
                 try {
                     //If we have an IP Address String from JSON, then try and create InetAddress object
                     if (ipAddr != null)
-                        inetAddress = InetAddress.getByAddress(ipAddr.getBytes());
+                        inetAddress = InetAddress.getByName(ipAddr);
                 } catch (UnknownHostException e) {
-                    LOG.warn("ACI: Invalid InetAddress for: {}", ipAddr, e);
+                    LOG.warn("ACI: Invalid InetAddress for: " + ipAddr, e);
                 }
 
-                requisitionBuilder.addNode(ImmutableRequisitionNode.newBuilder()
-                        .setForeignId(dn)
-                        .setNodeLabel(nodeId)
+                try {
+                    //If we have an IP Address String from JSON, then try and create InetAddress object
+                    if (ipAddr6 != null)
+                        inetAddress6 = InetAddress.getByName(ipAddr6);
+                } catch (UnknownHostException e) {
+                    LOG.warn("ACI: Invalid InetAddress for: " + ipAddr6, e);
+                }
+
+                ImmutableRequisitionNode.Builder builder = ImmutableRequisitionNode.newBuilder();
+
+                builder.setForeignId(dn)
+                        .setNodeLabel(dn)
                         .addCategory(locationCategory)
                         .addCategory(METADATA_CONTEXT_ID)
-                        .addCategory(role)
-                        .addMetaData(ImmutableRequisitionMetaData.newBuilder()
+                        .addCategory(role);
+
+                for (Object k:  attributes.keySet()) {
+                    String attributeKey = (String)k;
+
+                    if (attributes.get(k) instanceof String) {
+                        ImmutableRequisitionMetaData nodeId1 = ImmutableRequisitionMetaData.newBuilder()
                                 .setContext(METADATA_CONTEXT_ID)
-                                .setKey("nodeId")
-                                .setValue(nodeId)
-                                .build())
-                        .addMetaData(ImmutableRequisitionMetaData.newBuilder()
-                                .setContext(METADATA_CONTEXT_ID)
-                                .setKey("topologyId")
-                                .setValue(dn)
-                                .build())
-                        .addInterface(ImmutableRequisitionInterface.newBuilder()
-                                .setIpAddress(inetAddress)
-                                .setDescription("ACI-" + (String) attributes.get("dn"))
-                                .setSnmpPrimary(SnmpPrimaryType.PRIMARY)
-                                .addMonitoredService("ICMP")
-                                .addMonitoredService("SSH")
-                                .build())
+                                .setKey(attributeKey)
+                                .setValue((String)attributes.get(k))
+                                .build();
+
+                        builder.addMetaData(nodeId1);
+                    }
+                }
+
+                ImmutableRequisitionInterface ipv4InterfaceBuilder = ImmutableRequisitionInterface.newBuilder()
+                        .setIpAddress(inetAddress)
+                        .setDescription("ACI-" + (String) attributes.get("dn"))
+                        .build();
+
+                if (inetAddress6 != null) {
+
+                    ImmutableRequisitionInterface ipv6InterfaceBuilder = ImmutableRequisitionInterface.newBuilder()
+                        .setIpAddress(inetAddress6)
+                        .setDescription("ACI-" + (String) attributes.get("dn"))
+                        .build();
+
+                    builder.addInterface(ipv6InterfaceBuilder);
+                 }
+
+                builder.addInterface(ipv4InterfaceBuilder)
                         .addAsset("latitude", "45.340561")
                         .addAsset("longitude", "-75.910005")
-                        .addAsset("building", building)
-                        .build());
+                        .addAsset("building", building);
 
-//                iface.setManaged(Boolean.TRUE);
-//                iface.setStatus(Integer.valueOf(1));
+                requisitionBuilder.addNode(builder.build());
+
             }
         }
 
