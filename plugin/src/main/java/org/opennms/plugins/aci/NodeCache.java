@@ -88,17 +88,19 @@ public class NodeCache {
             String foreignSource = keyParts[0];
             String foreignId = keyParts[1];
 
+            LOG.debug("ACI: Looking up node by foreignSource: {} and foreignId: {}", foreignSource, foreignId);
             node = nodeDao.getNodeByForeignSourceAndForeignId(foreignSource, foreignId);
         } else if (keyParts.length == 1) {
             InetAddress address = InetAddress.getByName(key);
 //            List<Node> nodes = nodeDao.findByIpAddressAndService(address, "ICMP");
             // TODO - Temporarily changing to pull back all nodes until OIA NodeDAO supports findByIpAddressAndService
             List<Node> nodes = nodeDao.getNodes();
+            LOG.debug("ACI: Looping through {} node(s) to find a match for address: {}", nodes.size(), address.toString());
             if (nodes.size() > 0) {
 //                node = nodes.get(0);
                 NODELOOP: for (Node n: nodes) {
                     for (IpInterface ipInterface : n.getIpInterfaces()) {
-                        if (ipInterface != null && ipInterface.equals(address)) {
+                        if (ipInterface != null && ipInterface.getIpAddress().equals(address)) {
                             node = n;
                             break NODELOOP;
                         }
