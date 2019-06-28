@@ -34,3 +34,9 @@ Update automatically:
 ```
 bundle:watch *
 ```
+Run your provision import
+```
+provision:show-import -x aci cluster-name=sandboxapicdc
+
+./bin/send-event.pl uei.opennms.org/internal/importer/reloadImport --parm 'url requisition://aci?cluster-name=sandboxapicdc'
+```
