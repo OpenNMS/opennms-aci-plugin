@@ -110,6 +110,7 @@ public class ApicService {
             if ((System.currentTimeMillis() - waitStart) >= 30000) {
                 //If still running after 30 seconds, forcefully stop
                 LOG.warn("ACI: Forcefully stopping ApicServiceManager");
+                apicServiceManager.destroy();
                 apicServiceManager.interrupt();
             }
         }

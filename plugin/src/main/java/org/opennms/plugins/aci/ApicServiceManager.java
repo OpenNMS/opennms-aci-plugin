@@ -307,12 +307,11 @@ public class ApicServiceManager extends Thread {
             if (scheduler != null)
                 scheduler.shutdown(true);
         } catch (SchedulerException e) {
-            LOG.debug("Error shutting down scheduler", e);
-            e.printStackTrace();
+            LOG.debug("ACI: Error shutting down scheduler", e);
         }
 
         for (String key : clusterManagers.keySet()) {
-            LOG.debug("Stopping clusterManager: {}", key);
+            LOG.debug("ACI: Stopping clusterManager: {}", key);
             clusterManagers.get(key).stop();
             clusterManagers.remove(key);
         }
