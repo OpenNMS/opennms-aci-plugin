@@ -54,13 +54,16 @@ public class ACIRestConfig {
     private static byte[] sharedvector = { 0x01, 0x02, 0x03, 0x05, 0x07, 0x0B,
             0x0D, 0x11 };
 
-    private String clusterName = "sandboxapicdc";
+//    private String clusterName = "sandboxapicdc";
+    private String clusterName = "apic-fcs-322l";
 
-    private String aciUrl = "https://sandboxapicdc.cisco.com/";
+//    private String aciUrl = "https://sandboxapicdc.cisco.com/";
+    private String aciUrl = "https://198.18.133.200/";
 
     private String username = "admin";
 
-    public String password = "ciscopsdt";
+//    public String password = "ciscopsdt";
+    public String password = "C1sco12345";
 
     public ACIRestConfig() {}
 

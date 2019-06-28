@@ -99,7 +99,8 @@ public class ApicService {
             apicServiceManager.shutdown();
         
         long waitStart = System.currentTimeMillis();
-        while(apicServiceManager.isAlive()) {
+        while(apicServiceManager.isAlive() &&
+              (System.currentTimeMillis() - waitStart) < 120000) {
             LOG.info("ACI: Gracefully shutting down ...");
             try {
                 Thread.sleep(1000);
@@ -114,6 +115,9 @@ public class ApicService {
                 apicServiceManager.interrupt();
             }
         }
+
+        if (apicServiceManager.isAlive() && !apicServiceManager.isShutdown())
+            LOG.warn("ACI: Failed to stop ApicServiceManager thread!");
 
         LOG.info("ACI: Service stopped");
     }

@@ -344,6 +344,7 @@ public class ACIRestClient {
         final HttpResponse httpResponse = httpClient.execute(restPost, httpContext);
         final HttpEntity httpEntity = httpResponse.getEntity();
         final String data = EntityUtils.toString(httpEntity);
+        LOG.debug("ACI: data: {}", data);
         final JSONParser parser = new JSONParser();
         JSONObject result = (JSONObject) parser.parse(data);
 
