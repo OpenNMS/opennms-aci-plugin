@@ -8,7 +8,6 @@
         <feature dependency="true">aries-blueprint</feature>
         <feature dependency="true">shell</feature>
         <feature version="${opennms.api.version}" dependency="true">opennms-integration-api</feature>
-        <feature version="${okhttp.version}" dependency="true">okhttp</feature>
         <bundle>mvn:commons-io/commons-io/${commonsIoVersion}</bundle>
         <bundle>mvn:commons-lang/commons-lang/${commonsLangVersion}</bundle>
         <bundle>mvn:org.apache.commons/commons-lang3/${commonsLang3Version}</bundle>
@@ -21,7 +20,10 @@
         <bundle>wrap:mvn:org.apache.httpcomponents/httpclient/${apache-http-client-version}</bundle>
         <bundle>wrap:mvn:org.apache.httpcomponents/httpcore/${apache-http-core-version}</bundle>
         <bundle>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+        <!--
+        -->
         <bundle>mvn:org.quartz-scheduler/quartz/${quartzVersion}</bundle>
+        <bundle>wrap:mvn:org.quartz-scheduler/quartz-jobs/${quartzVersion}</bundle>
         <bundle>mvn:org.opennms.plugins.aci/aci-plugin/${project.version}</bundle>
     </feature>
 

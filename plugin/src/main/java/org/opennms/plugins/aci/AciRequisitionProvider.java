@@ -138,6 +138,42 @@ public class AciRequisitionProvider implements RequisitionProvider {
         final ImmutableRequisition.Builder requisitionBuilder = ImmutableRequisition.newBuilder()
                 .setForeignSource(foreignSource);
 
+        //First add all the apic nodes in this cluster.
+        List<SouthCluster> clusters = this.southboundConfigDao.getSouthboundClusters();
+        for (SouthCluster southCluster : clusters) {
+            if (southCluster.getClusterType().equals(ACI_CLUSTER_TYPE) &&
+                    request.getForeignSource().equals(southCluster.getClusterName())) {
+                String building = request.getForeignSource();
+                for (SouthElement southElement : southCluster.getElements()) {
+                    InetAddress inetAddress = NON_RESPONSIVE_IP_ADDRESS;
+
+                    try {
+                        //If we have an IP Address String from JSON, then try and create InetAddress object
+                        inetAddress = InetAddress.getByName(southElement.getHost());
+                    } catch (UnknownHostException e) {
+                        LOG.warn("ACI: Invalid InetAddress for: " + southElement.getHost(), e);
+                    }
+                    ImmutableRequisitionNode.Builder builder = ImmutableRequisitionNode.newBuilder();
+
+                    builder.setForeignId(southElement.getHost())
+                            .setNodeLabel(southElement.getHost());
+
+                    ImmutableRequisitionInterface ipv4InterfaceBuilder = ImmutableRequisitionInterface.newBuilder()
+                            .setIpAddress(inetAddress)
+                            .setDescription("ACI-" + southElement.getHost())
+                            .build();
+
+                    builder.addInterface(ipv4InterfaceBuilder)
+                            .addAsset("latitude", "45.340561")
+                            .addAsset("longitude", "-75.910005")
+                            .addAsset("building", building);
+
+                    requisitionBuilder.addNode(builder.build());
+                }
+            }
+        }
+
+        //Next, query all topology systems and add
         LOG.debug("sending get for top system");
         JSONArray results = null;
         try {

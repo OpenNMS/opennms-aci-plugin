@@ -149,6 +149,7 @@
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
             <version>${quartzVersion}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Test -->

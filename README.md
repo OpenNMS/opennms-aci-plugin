@@ -23,6 +23,12 @@ Build and install the plugin into your local Maven repository using:
 ```
 mvn clean install
 ```
+Before installing plugin:
+- add southboud-configuration.xml to <opennms.home>/etc
+- Add SSL cert to java keystore:
+```
+keytool -import -alias apic -keystore /usr/lib/jvm/java-8-oracle/jre/lib/security/cacerts -file mycertfile.der
+```
 
 From the OpenNMS Karaf shell:
 ```
@@ -36,7 +42,8 @@ bundle:watch *
 ```
 Run your provision import
 ```
-provision:show-import -x aci cluster-name=sandboxapicdc
+provision:show-import -x aci cluster-name=<cluster-name>
 
-./bin/send-event.pl uei.opennms.org/internal/importer/reloadImport --parm 'url requisition://aci?cluster-name=sandboxapicdc'
+./bin/send-event.pl uei.opennms.org/internal/importer/reloadImport --parm 'url requisition://aci?cluster-name=<cluster-name>'
 ```
+
