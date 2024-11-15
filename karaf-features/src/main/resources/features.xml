@@ -20,6 +20,9 @@
         <bundle>wrap:mvn:org.apache.httpcomponents/httpclient/${apache-http-client-version}</bundle>
         <bundle>wrap:mvn:org.apache.httpcomponents/httpcore/${apache-http-core-version}</bundle>
         <bundle>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+        <bundle>mvn:org.eclipse.persistence/org.eclipse.persistence.moxy/${eclipselinkVersion}</bundle>
+        <bundle>mvn:org.eclipse.persistence/org.eclipse.persistence.asm/2.7.8</bundle>
+        <bundle>mvn:org.eclipse.persistence/org.eclipse.persistence.core/${eclipselinkVersion}</bundle>
         <!--
         -->
         <bundle>mvn:org.quartz-scheduler/quartz/${quartzVersion}</bundle>
