@@ -12,7 +12,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <guava.version>33.3.0-jre</guava.version>
         <hamcrest.version>1.3</hamcrest.version>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <junit.version>4.13.2</junit.version>
         <karaf.version>4.3.10</karaf.version>
         <log4j.version>2.23.1</log4j.version>
@@ -20,7 +20,8 @@
         <okhttp.version>3.10.0</okhttp.version>
         <okio.bundle.version>1.14.0_1</okio.bundle.version>
         <okhttp.bundle.version>3.10.0_2</okhttp.bundle.version>
-        <opennms.api.version>1.6.0</opennms.api.version>
+        <opennms.api.version>2.0.0-SNAPSHOT</opennms.api.version>
+        <opennms.api.version.range>[1.6,3.0)</opennms.api.version.range>
         <osgi.version>6.0.0</osgi.version>
         <osgi.compendium.version>5.0.0</osgi.compendium.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
