@@ -1,0 +1,74 @@
+version: 2.1
+
+executors:
+  build-executor:
+    docker:
+      - image: cimg/openjdk:17.0
+        environment:
+          MAVEN_OPTS: -Xmx1g
+
+orbs:
+  branch-management: opennms/branch-management@2.3.0
+
+
+commands:
+  shallow-clone:
+      description: "Quick shallow checkout (if possible)"
+      steps:
+        - run:
+            name: git clone
+            command: |
+              install -d -m 700 ~/.ssh
+              ssh-keyscan github.com >> ~/.ssh/known_hosts
+              ssh-keyscan -p 443 ssh.github.com >> ~/.ssh/known_hosts
+              chmod 600 ~/.ssh/known_hosts
+              git clone --no-checkout --filter=tree:0 "${CIRCLE_REPOSITORY_URL}" .
+              if [ -n "${CIRCLE_TAG}" ]; then
+                git checkout --force "${CIRCLE_TAG}"
+                git reset --hard "${CIRCLE_SHA1}"
+              else
+                git checkout --force -B "${CIRCLE_BRANCH}" "${CIRCLE_SHA1}"
+              fi
+  build:
+    description: "Build"
+    steps:
+      - run:
+          name: Compile source without tests
+          command: |
+            mvn clean install
+            mkdir ~/output
+            
+            find ~/project -type f -regex ".*opennms-aci-plugin.kar" -exec cp {}  ~/output \;
+
+      - store_artifacts:
+          path: ~/output/opennms-aci-plugin.kar
+          destination: karfile
+
+workflows:
+  build-deploy:
+    jobs:
+      - build
+
+
+jobs:
+  build:
+    executor: build-executor
+    steps:
+      - shallow-clone
+      - run:
+          name: Check releasability
+          command: |
+            curl -L -O https://raw.githubusercontent.com/OpenNMS/opennms-repo/master/script/release-lint.sh
+            chmod 755 release-lint.sh
+            if [ -z "${CIRCLE_TAG}" ]; then
+              ./release-lint.sh -w
+            else
+              ./release-lint.sh
+            fi
+      - build
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - .m2
+            - project
+            - output
