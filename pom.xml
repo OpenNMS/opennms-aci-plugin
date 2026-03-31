@@ -34,7 +34,7 @@
         <apache-http-core-version>4.3.3</apache-http-core-version>
         <quartzVersion>2.2.3</quartzVersion>
         <commonsLangVersion>2.6</commonsLangVersion>
-        <commonsLang3Version>3.4</commonsLang3Version>
+        <commonsLang3Version>3.18.0</commonsLang3Version>
         <springVersion>4.2.9.RELEASE</springVersion>
         <eclipselinkVersion>2.5.1</eclipselinkVersion>
         <json-simple-version>1.1.1</json-simple-version>
